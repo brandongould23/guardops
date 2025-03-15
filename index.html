@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GuardOps - Revolutionary Security Guard Management Platform</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js" defer></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap">
+    <style>
+        [x-cloak] { display: none !important; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: #000;
+            color: #fff;
+            overflow: hidden;
+            margin: 0;
+        }
+        #bg-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 0;
+        }
+        .content {
+            position: relative;
+            z-index: 1;
+        }
+        .gradient-text {
+            background: linear-gradient(to right, #00ffff, #00ff87);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+        }
+        .glass-morph {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+        }
+        .timer-value {
+            text-shadow: 0 0 20px rgba(0, 255, 255, 0.5);
+        }
+        .cta-button {
+            background: linear-gradient(45deg, #00ffff, #00ff87);
+            transition: all 0.3s ease;
+        }
+        .cta-button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+        }
+        .input-glow:focus {
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center">
+    <canvas id="bg-canvas"></canvas>
+
+    <div class="content w-full max-w-4xl mx-auto px-4 sm:px-6 py-8">
+        <div class="text-center">
+            <div class="text-2xl sm:text-3xl font-bold gradient-text mb-4 sm:mb-6 tracking-wider">GUARDOPS</div>
+            
+            <h1 class="text-5xl sm:text-6xl lg:text-8xl font-bold mb-6 sm:mb-8 leading-tight tracking-tight">
+                <span class="gradient-text block mb-2">Secure.</span>
+                <span class="gradient-text block mb-2" style="opacity: 0.9">Efficient.</span>
+                <span class="gradient-text block" style="opacity: 0.8">Future.</span>
+            </h1>
+
+            <p class="text-lg sm:text-xl text-gray-400 mb-8 sm:mb-12 max-w-2xl mx-auto leading-relaxed px-4">
+                The next generation of security guard management
+                <span class="block mt-2 sm:mt-3 gradient-text font-semibold">Launching September 1, 2025</span>
+            </p>
+            
+            <!-- Countdown Timer -->
+            <div x-data="timer()" x-init="init()" class="grid grid-cols-2 sm:flex sm:justify-center gap-4 sm:gap-6 md:gap-8 mb-12 sm:mb-16 px-4">
+                <div class="glass-morph rounded-2xl p-4 sm:p-6 w-full sm:w-24 md:w-28">
+                    <div class="text-2xl sm:text-3xl md:text-4xl font-bold timer-value" x-text="days" x-cloak>00</div>
+                    <div class="text-gray-400 text-xs sm:text-sm mt-1 sm:mt-2">DAYS</div>
+                </div>
+                <div class="glass-morph rounded-2xl p-4 sm:p-6 w-full sm:w-24 md:w-28">
+                    <div class="text-2xl sm:text-3xl md:text-4xl font-bold timer-value" x-text="hours" x-cloak>00</div>
+                    <div class="text-gray-400 text-xs sm:text-sm mt-1 sm:mt-2">HOURS</div>
+                </div>
+                <div class="glass-morph rounded-2xl p-4 sm:p-6 w-full sm:w-24 md:w-28">
+                    <div class="text-2xl sm:text-3xl md:text-4xl font-bold timer-value" x-text="minutes" x-cloak>00</div>
+                    <div class="text-gray-400 text-xs sm:text-sm mt-1 sm:mt-2">MINUTES</div>
+                </div>
+                <div class="glass-morph rounded-2xl p-4 sm:p-6 w-full sm:w-24 md:w-28">
+                    <div class="text-2xl sm:text-3xl md:text-4xl font-bold timer-value" x-text="seconds" x-cloak>00</div>
+                    <div class="text-gray-400 text-xs sm:text-sm mt-1 sm:mt-2">SECONDS</div>
+                </div>
+            </div>
+
+            <!-- Email Signup -->
+            <div class="max-w-md mx-auto px-4">
+                <form class="flex flex-col sm:flex-row gap-3" onsubmit="return false;">
+                    <input type="email" 
+                           placeholder="Enter your email" 
+                           class="w-full sm:flex-1 px-4 sm:px-5 py-3 rounded-xl bg-black border border-gray-800 text-white placeholder-gray-500 focus:outline-none focus:border-cyan-500 input-glow text-base">
+                    <button class="w-full sm:w-auto cta-button text-black px-6 py-3 rounded-xl font-medium text-base">
+                        Join Waitlist
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Three.js Background Animation
+        const canvas = document.getElementById('bg-canvas');
+        const renderer = new THREE.WebGLRenderer({ canvas, antialias: true });
+        const scene = new THREE.Scene();
+        const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+
+        // Create particles
+        const particlesGeometry = new THREE.BufferGeometry();
+        const particlesCount = 5000;
+        const posArray = new Float32Array(particlesCount * 3);
+
+        for(let i = 0; i < particlesCount * 3; i++) {
+            posArray[i] = (Math.random() - 0.5) * 50;
+        }
+
+        particlesGeometry.setAttribute('position', new THREE.BufferAttribute(posArray, 3));
+
+        const particlesMaterial = new THREE.PointsMaterial({
+            size: 0.005,
+            color: 0x00ffff,
+        });
+
+        const particlesMesh = new THREE.Points(particlesGeometry, particlesMaterial);
+        scene.add(particlesMesh);
+
+        camera.position.z = 30;
+
+        function animate() {
+            requestAnimationFrame(animate);
+            particlesMesh.rotation.y += 0.0004;
+            particlesMesh.rotation.x += 0.0002;
+            renderer.render(scene, camera);
+        }
+
+        function onWindowResize() {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        }
+
+        window.addEventListener('resize', onWindowResize);
+        onWindowResize();
+        animate();
+
+        // Countdown Timer
+        function calculateTimeRemaining() {
+            const target = new Date('2025-09-01T00:00:00-07:00'); // Pacific Time
+            const now = new Date();
+            const difference = target - now;
+
+            const d = Math.floor(difference / (1000 * 60 * 60 * 24));
+            const h = Math.floor((difference % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+            const m = Math.floor((difference % (1000 * 60 * 60)) / (1000 * 60));
+            const s = Math.floor((difference % (1000 * 60)) / 1000);
+
+            return {
+                days: d.toString().padStart(2, '0'),
+                hours: h.toString().padStart(2, '0'),
+                minutes: m.toString().padStart(2, '0'),
+                seconds: s.toString().padStart(2, '0')
+            };
+        }
+
+        function timer() {
+            const initial = calculateTimeRemaining();
+            return {
+                days: initial.days,
+                hours: initial.hours,
+                minutes: initial.minutes,
+                seconds: initial.seconds,
+                init() {
+                    setInterval(() => {
+                        const time = calculateTimeRemaining();
+                        this.days = time.days;
+                        this.hours = time.hours;
+                        this.minutes = time.minutes;
+                        this.seconds = time.seconds;
+                    }, 1000);
+                }
+            }
+        }
+    </script>
+</body>
+</html>
