@@ -112,7 +112,7 @@
             </div>
 
             <!-- Waitlist Button -->
-            <div class="max-w-md mx-auto px-4" x-data="waitlist()">
+            <div class="max-w-md mx-auto px-4" x-data="waitlist()" x-init="init()">
                 <button 
                     @click="showForm = true"
                     class="w-full sm:w-auto cta-button text-black px-6 py-3 rounded-xl font-medium text-base">
@@ -130,8 +130,7 @@
                      @keydown.escape.window="showForm = false"
                      class="fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
                     <div class="glass-morph w-full max-w-md rounded-2xl p-6 relative"
-                         @click.away="showForm = false"
-                         x-init="$nextTick(() => $refs.emailInput.focus());">
+                         @click.away="showForm = false">
                         <button @click="showForm = false" 
                                 class="absolute top-4 right-4 text-gray-400 hover:text-white transition-colors">
                             <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -230,6 +229,13 @@
         // Waitlist Form Handler
         function waitlist() {
             return {
+                init() {
+                    this.$watch('showForm', value => {
+                        if (value) {
+                            setTimeout(() => this.$refs.emailInput.focus(), 50);
+                        }
+                    });
+                },
                 email: '',
                 company_name: '',
                 company_size: '',
