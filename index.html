@@ -260,9 +260,24 @@
 
                     try {
                         // Get IP address before form submission
-                        const ipResponse = await fetch('https://api.ipify.org?format=json');
-                        const ipData = await ipResponse.json();
-                        this.ip_address = ipData.ip;
+                        try {
+                            const ipResponse = await fetch('https://api.ipify.org?format=json');
+                            const ipData = await ipResponse.json();
+                            this.ip_address = ipData.ip;
+                        } catch (ipError) {
+                            console.error('IP fetch error:', ipError);
+                            this.ip_address = 'unavailable';
+                        }
+
+                        const formData = {
+                            email: this.email,
+                            company_name: this.company_name,
+                            company_size: parseInt(this.company_size),
+                            currently_using: this.currently_using,
+                            ip_address: this.ip_address
+                        };
+
+                        console.log('Submitting form data:', formData);
 
                         const response = await fetch('https://wwmvnqbmomsgtczsmhmu.supabase.co/rest/v1/waitlist', {
                             method: 'POST',
@@ -271,17 +286,13 @@
                                 'Content-Type': 'application/json',
                                 'Prefer': 'return=minimal'
                             },
-                            body: JSON.stringify({
-                                email: this.email,
-                                company_name: this.company_name,
-                                company_size: parseInt(this.company_size),
-                                currently_using: this.currently_using,
-                                ip_address: this.ip_address
-                            })
+                            body: JSON.stringify(formData)
                         });
 
                         if (!response.ok) {
-                            throw new Error('Failed to submit email');
+                            const errorText = await response.text();
+                            console.error('Submission error:', errorText);
+                            throw new Error(`Failed to submit: ${errorText}`);
                         }
 
                         // Reset form
@@ -292,7 +303,8 @@
                         this.showForm = false;
                         this.showSuccess = true;
                     } catch (err) {
-                        this.error = 'Failed to join waitlist. Please try again.';
+                        console.error('Form submission error:', err);
+                        this.error = `Failed to join waitlist: ${err.message}`;
                     } finally {
                         this.loading = false;
                     }
